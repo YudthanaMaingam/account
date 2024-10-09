@@ -19,8 +19,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          title: const Text("แอพบัญชี"),
+          backgroundColor: Colors.blue,
+          centerTitle: true,
+          title: const Text("My Planet",style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),),
           actions: [
             IconButton(
               icon: const Icon(Icons.exit_to_app),
@@ -34,7 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context, TransactionProvider provider, Widget? child) {
             if (provider.transactions.isEmpty) {
               return const Center(
-                child: Text('ไม่มีรายการ'),
+                child: Text('ไม่มีดาวเคราะห์'),
               );
             } else {
               return ListView.builder(
