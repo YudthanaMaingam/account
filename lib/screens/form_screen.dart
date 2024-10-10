@@ -1,13 +1,14 @@
 import 'package:account/main.dart';
 import 'package:account/models/transactions.dart';
+import 'package:account/screens/home_screen.dart';
+import 'package:account/screens/homeplanet.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:account/provider/transaction_provider.dart';
+import 'package:account/models/planets.dart';
 
 class FormScreen extends StatefulWidget {
-
-
   const FormScreen({super.key});
 
   @override
@@ -15,78 +16,138 @@ class FormScreen extends StatefulWidget {
 }
 
 class _FormScreenState extends State<FormScreen> {
-  final formKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
 
-  final titleController = TextEditingController();
+  String _name = '';
+  String _discover = '';
+  String _time = '';
+  Type _type = Type.bType;
 
-  final amountController = TextEditingController();
+  // final titleController = TextEditingController();
+
+  // final amountController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-  
     return Scaffold(
         appBar: AppBar(
-          title: const Text('แบบฟอร์มเพิ่มข้อมูล'),
+          backgroundColor: Colors.blue,
+          centerTitle: true,
+          title: const Text(
+            'เพิ่มดาวเคราะห์',
+            style: TextStyle(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
         body: Form(
-            key: formKey,
+            key: _formKey,
             child: Column(
               children: [
                 TextFormField(
                   decoration: const InputDecoration(
-                    labelText: 'ชื่อรายการ',
+                    labelText: 'ชื่อดาวเคราะห์',
                   ),
-                  autofocus: false,
-                  controller: titleController,
-                  validator: (String? str) {
-                    if (str!.isEmpty) {
-                      return 'กรุณากรอกข้อมูล';
+                  // autofocus: false,
+                  // controller: titleController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'กรุณากรอกชื่อ';
                     }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _name = value!;
                   },
                 ),
                 TextFormField(
                   decoration: const InputDecoration(
-                    labelText: 'จำนวนเงิน',
+                    labelText: 'ผู้ค้นพบ',
                   ),
-                  keyboardType: TextInputType.number,
-                  controller: amountController,
-                  validator: (String? input) {
-                    try {
-                      double amount = double.parse(input!);
-                      if (amount < 0) {
-                        return 'กรุณากรอกข้อมูลมากกว่า 0';
-                      }
-                    } catch (e) {
-                      return 'กรุณากรอกข้อมูลเป็นตัวเลข';
+                  // autofocus: false,
+                  // controller: titleController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'กรุณากรอกผู้ค้นพบ';
                     }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _discover = value!;
                   },
                 ),
-                TextButton(
-                    child: const Text('บันทึก'),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: 'เวลาที่ค้นพบ(ค.ศ.)',
+                  ),
+                  // autofocus: false,
+                  // controller: titleController,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'กรุณากรอกเวลาที่ค้นพบ(ค.ศ.)';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) {
+                    _time = value!;
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                DropdownButtonFormField(
+                    value: _type,
+                    decoration: const InputDecoration(
+                        label: Text(
+                      "ชนิด",
+                      style: TextStyle(fontSize: 15),
+                    )),
+                    items: Type.values.map((key) {
+                      return DropdownMenuItem(
+                        value: key,
+                        child: Text(key.title),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        _type = value!;
+                      });
+                    }),
+                FilledButton(
                     onPressed: () {
-                          if (formKey.currentState!.validate())
-                            {
-                              // create transaction data object
-                              var statement = Transactions(
-                                  keyID: null,
-                                  title: titleController.text,
-                                  amount: double.parse(amountController.text),
-                                  date: DateTime.now()
-                                  );
-                            
-                              // add transaction data object to provider
-                              var provider = Provider.of<TransactionProvider>(context, listen: false);
-                              
-                              provider.addTransaction(statement);
-
-                              Navigator.push(context, MaterialPageRoute(
-                                fullscreenDialog: true,
-                                builder: (context){
-                                  return MyHomePage();
-                                }
-                              ));
-                            }
-                        })
+                      _formKey.currentState!.validate();
+                      _formKey.currentState!.save();
+                      data.add(Planets(
+                          name: _name,
+                          discover: _discover,
+                          time: _time,
+                          planetType: _type));
+                      _formKey.currentState!.reset();
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (ctx) => const MyHomePage()));
+                    },
+                    style:
+                        FilledButton.styleFrom(backgroundColor: Colors.green),
+                    child: const Text(
+                      "บันทึก",
+                      style: TextStyle(fontSize: 20),
+                    )),
+                FilledButton(
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (ctx) => const MyHomePage()));
+                  },
+                  style: FilledButton.styleFrom(backgroundColor: Colors.red),
+                  child: const Text(
+                    "ยกเลิก",
+                    style: TextStyle(fontSize: 20),
+                  ),
+                )
               ],
             )));
   }
