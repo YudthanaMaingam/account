@@ -1,18 +1,19 @@
 import 'package:flutter/foundation.dart';
-import 'package:project/models/Planet.dart';
+import 'package:project/models/planet_detail.dart';
 
 class PlanetProvider with ChangeNotifier{
-  List<Planet> transaction = [
-    Planet(name: "WASP-1", discover: "The Wasp", timeDiscover: "2006", type: "b", date: DateTime.now()),
-    Planet(name: "WASP-16", discover: "The Wasp", timeDiscover: "2009", type: "b", date: DateTime.now()),
+  List<Planet> planetList = [
+    Planet(name: "WASP-1", discover: "The Wasp", timeDiscover: "2006", type: Type.bType, date: DateTime.now()),
+    Planet(name: "WASP-16", discover: "The Wasp", timeDiscover: "2009", type: Type.dType, date: DateTime.now()),
+    Planet(name: "EARTH-616", discover: "OBA", timeDiscover: "1999", type: Type.cType, date: DateTime.now()),
 
   ];
 
-  List<Planet> getTransaction(){
-    return transaction;
+  List<Planet> getPlanet(){
+    return planetList;
   }
 
-  void addTransaction(Planet statement){
-    transaction.add(statement);
+  void addPlanet(Planet statement){
+    planetList.add(statement);
   }
 }
