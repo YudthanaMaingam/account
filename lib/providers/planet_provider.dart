@@ -3,9 +3,9 @@ import 'package:project/models/planet_detail.dart';
 
 class PlanetProvider with ChangeNotifier{
   List<Planet> planetList = [
-    Planet(name: "WASP-1", discover: "The Wasp", timeDiscover: "2006", type: Type.bType, date: DateTime.now()),
-    Planet(name: "WASP-16", discover: "The Wasp", timeDiscover: "2009", type: Type.dType, date: DateTime.now()),
-    Planet(name: "EARTH-616", discover: "OBA", timeDiscover: "1999", type: Type.cType, date: DateTime.now()),
+    Planet(name: "WASP-1", discover: "Cameron et al.(SuperWASP and SOPHIE)", timeDiscover: "2006", type: Type.bType, date: DateTime.now()),
+    Planet(name: "WASP-16", discover: "Cameron et al.(SuperWASP and SOPHIE)", timeDiscover: "2009", type: Type.dType, date: DateTime.now()),
+    Planet(name: "Gliese 581", discover: "Stéphane Udry Team", timeDiscover: "2007", type: Type.cType, date: DateTime.now()),
 
   ];
 
@@ -14,6 +14,8 @@ class PlanetProvider with ChangeNotifier{
   }
 
   void addPlanet(Planet statement){
-    planetList.add(statement);
+    planetList.insert(0,statement);
+    //แจ้งเตือน Consumer
+    notifyListeners();
   }
 }
