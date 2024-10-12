@@ -102,6 +102,7 @@ class _FormScreenState extends State<FormScreen> {
                      if (formKey.currentState!.validate()) {
                         // สร้าง object ของ Planet
                         var statement = Planet(
+                          keyID: null,
                           name: titleController.text,
                           discover: discoverController.text,
                           timeDiscover: timeController.text,
