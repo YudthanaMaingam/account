@@ -18,11 +18,34 @@ class PlanetProvider with ChangeNotifier{
 
   void addPlanet(Planet statement) async {
     var db = PlanetDB(dbName: "planet.db");
-    //save ข้อมูล
-    await db.InsertData(statement);
+    var keyID = await db.InsertData(statement);
+    this.planetList = await db.loadAllData();
+    print(this.planetList);
+    // await db.InsertData(statement);
 
-    planetList.insert(0,statement);
+    // planetList.insert(0,statement);
     //แจ้งเตือน Consumer
     notifyListeners();
   }
+
+  void deletePlanet(int? index) async {
+  if (index != null) {  // ตรวจสอบว่ามีค่า index หรือไม่
+    print("delete index: $index");
+    var db = await PlanetDB(dbName: "planet.db");
+    await db.deleteDatabase(index);  // ลบข้อมูลใน database
+    this.planetList = await db.loadAllData();  // โหลดข้อมูลใหม่หลังลบ
+    notifyListeners();  // แจ้งให้ UI อัปเดต
+  } else {
+    print("Error: Index is null, cannot delete.");
+  }
+}
+  void updatePlanet(Planet statement) async {
+  var db = await PlanetDB(dbName: "planet.db");
+
+  await db.updateDatabase(statement);
+  
+  this.planetList = await db.loadAllData();
+  
+  notifyListeners();
+}
 }
