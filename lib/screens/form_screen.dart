@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:project/main.dart';
 import 'package:project/models/planet_detail.dart';
 import 'package:project/providers/planet_provider.dart';
+// import 'package:project/screens/home_screen.dart';
 import 'package:provider/provider.dart';
+// import 'package:project/main.dart';
 
 class FormScreen extends StatefulWidget {
   const FormScreen({super.key});
@@ -108,7 +111,11 @@ class _FormScreenState extends State<FormScreen> {
                         //เรียก provider
                         var provider = Provider.of<PlanetProvider>(context,listen:false);
                         provider.addPlanet(statement);
-                        Navigator.pop(context);
+                        Navigator.push(context, MaterialPageRoute(
+                          fullscreenDialog: true,
+                          builder: (context){
+                          return const MyHomePage(title: '',);
+                        }));
                       }
                     },
                     style: FilledButton.styleFrom(
