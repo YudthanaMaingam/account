@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:project/models/planet_detail.dart';
 import 'package:project/providers/planet_provider.dart';
+import 'package:project/screens/edit_screen.dart';
+import 'package:project/database/planet_database.dart';
 // import 'package:project/screens/form_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -67,9 +69,21 @@ class _HomeScreenState extends State<HomeScreen> {
                           Text("ผู้ค้นพบ:  ${data.discover}"),
                           Text("เวลาที่ค้นพบ: ค.ศ. ${data.timeDiscover}"),
                           Text("ชนิด: ${data.type.title}"),
-                          Text("บันทึกเมื่อ: ${DateFormat("dd/MM/yyyy").format(data.date)}"),
+                          Text("บันทึกเมื่อ: ${DateFormat("dd/MM/yyyy hh:mm:ss").format(data.date)}"),
                         ],
                       ),
+                      trailing: IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: (){
+                          provider.deletePlanet(data.keyID); // ตรวจสอบว่าค่า data.keyID ไม่เป็น null
+                        },
+                        ),
+                        onTap: (){
+                          Navigator.push(
+                            context, MaterialPageRoute(builder: (context){
+                              return EditScreen(editstatement: data);
+                            }));
+                        },
                     ),
                   );
                 });
