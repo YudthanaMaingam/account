@@ -41,14 +41,14 @@ class PlanetDB {
   }
 
   //ดึงข้อมูล
-  loadAllData() async {
+  Future <List< Planet>> loadAllData() async {
     var db = await this.openDatabase();
     var store = intMapStoreFactory.store("planet");
     var snapshot = await store.find(db,
         finder: Finder(sortOrders: [SortOrder(Field.key, false)]));
-    List<Planet> statementList = [];
+    List<Planet> planetList = [];
     for (var record in snapshot) {
-      statementList.add(Planet(
+      planetList.add(Planet(
           name: record["title"].toString(),
           discover: record["discover"].toString(),
           timeDiscover: record["time"].toString(),
@@ -56,6 +56,6 @@ class PlanetDB {
           date: DateTime.parse(record["date"].toString())));
     }
     db.close();
-    return statementList;
+    return planetList;
   }
 }
