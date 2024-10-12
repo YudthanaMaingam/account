@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:project/models/planet_detail.dart';
 import 'package:project/providers/planet_provider.dart';
-import 'package:project/screens/form_screen.dart';
+// import 'package:project/screens/form_screen.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -32,11 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
           actions: [
             IconButton(
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) {
-                    return const FormScreen();
-                  }));
+                  SystemNavigator.pop();
                 },
-                icon: const Icon(Icons.add_outlined))
+                icon: const Icon(Icons.exit_to_app_outlined))
           ],
         ),
         body: Consumer(
