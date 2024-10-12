@@ -1,15 +1,17 @@
-import 'package:account/main.dart';
-import 'package:account/models/transactions.dart';
-import 'package:account/provider/transaction_provider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:project/main.dart';
+import 'package:project/models/planet_detail.dart';
+import 'package:project/providers/planet_provider.dart';
+// import 'package:project/screens/home_screen.dart';
 import 'package:provider/provider.dart';
+// import 'package:project/main.dart';
 
+// ignore: must_be_immutable
 class EditScreen extends StatefulWidget {
 
-  Transactions statement;
+  Planet editstatement;
 
-  EditScreen({super.key, required this.statement});
+  EditScreen({super.key, required this.editstatement});
 
   @override
   State<EditScreen> createState() => _EditScreenState();
@@ -19,77 +21,130 @@ class _EditScreenState extends State<EditScreen> {
   final formKey = GlobalKey<FormState>();
 
   final titleController = TextEditingController();
+  final discoverController = TextEditingController();
+  final timeController = TextEditingController();
 
-  final amountController = TextEditingController();
+  Type? _selectedType;
 
   @override
   Widget build(BuildContext context) {
-    titleController.text = widget.statement.title;
-    amountController.text = widget.statement.amount.toString();
+
+@override
+void initState() {
+  super.initState();
+  
+  // ตั้งค่าตัวควบคุมใน initState
+  titleController.text = widget.editstatement.name;
+  discoverController.text = widget.editstatement.discover;
+  timeController.text = widget.editstatement.timeDiscover;
+  _selectedType = widget.editstatement.type;
+}
+
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('แบบฟอร์มแก้ไขข้อมูล'),
+      appBar: AppBar(
+        backgroundColor: Colors.blue,
+        centerTitle: true,
+        title: const Text(
+          "แก้ไขดวงดาว",
+          style: TextStyle(
+              fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
         ),
-        body: Form(
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Form(
             key: formKey,
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'ชื่อรายการ',
-                  ),
-                  autofocus: false,
+                  decoration: const InputDecoration(labelText: "ชื่อดาวเคราะห์"),
                   controller: titleController,
                   validator: (String? str) {
                     if (str!.isEmpty) {
-                      return 'กรุณากรอกข้อมูล';
+                      return "กรุณาป้อนข้อมูล";
                     }
+                    return null;
                   },
                 ),
                 TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: 'จำนวนเงิน',
-                  ),
-                  keyboardType: TextInputType.number,
-                  controller: amountController,
-                  validator: (String? input) {
-                    try {
-                      double amount = double.parse(input!);
-                      if (amount < 0) {
-                        return 'กรุณากรอกข้อมูลมากกว่า 0';
-                      }
-                    } catch (e) {
-                      return 'กรุณากรอกข้อมูลเป็นตัวเลข';
+                  decoration: const InputDecoration(labelText: "ผู้ค้นพบ"),
+                  controller: discoverController,
+                  validator: (String? str) {
+                    if (str!.isEmpty) {
+                      return "กรุณาป้อนข้อมูล";
                     }
+                    return null;
                   },
                 ),
-                TextButton(
-                    child: const Text('แก้ไขข้อมูล'),
-                    onPressed: () {
-                          if (formKey.currentState!.validate())
-                            {
-                              // create transaction data object
-                              var statement = Transactions(
-                                  keyID: widget.statement.keyID,
-                                  title: titleController.text,
-                                  amount: double.parse(amountController.text),
-                                  date: DateTime.now()
-                                  );
-                            
-                              // add transaction data object to provider
-                              var provider = Provider.of<TransactionProvider>(context, listen: false);
-                              
-                              provider.updateTransaction(statement);
+                TextFormField(
+                  decoration: const InputDecoration(labelText: "เวลาที่ค้นพบ(ค.ศ.)"),
+                  keyboardType: TextInputType.number,
+                  controller: timeController,
+                  validator: (String? time) {
+                    if (time!.isEmpty) {
+                      return "กรุณาป้อนข้อมูล";
+                    }
+                    if (int.parse(time) <= 0) {
+                      return "กรุณาป้อนปี ค.ศ.";
+                    }
+                    return null;
+                  },
+                ),
+                DropdownButtonFormField<Type>(
+                  decoration: const InputDecoration(labelText: "ชนิด"),
+                  value: _selectedType,
+                  items: Type.values.map((Type type) {
+                    return DropdownMenuItem<Type>(
+                      value: type,
+                      child: Text(type.title),  // แสดงชนิดของดาวเคราะห์
+                    );
+                  }).toList(),
+                  onChanged: (Type? newValue) {
+                    setState(() {
+                      _selectedType = newValue;  // อัปเดตค่าที่เลือก
+                    });
+                  },
+                  validator: (value) => value == null ? 'กรุณาเลือกชนิด' : null,
+                ),
 
-                              Navigator.push(context, MaterialPageRoute(
-                                fullscreenDialog: true,
-                                builder: (context){
-                                  return MyHomePage();
-                                }
-                              ));
-                            }
-                        })
+                const SizedBox(
+                  height: 10,
+                ),
+                FilledButton(
+                    onPressed: () {
+                     if (formKey.currentState!.validate()) {
+                        // สร้าง object ของ Planet
+                        var statement = Planet(
+                          keyID: widget.editstatement.keyID,
+                          name: titleController.text,
+                          discover: discoverController.text,
+                          timeDiscover: timeController.text,
+                          type: _selectedType!,  // ใช้ค่าที่เลือกจาก enum
+                          date: DateTime.now(),
+                        );
+                        print('Updating Planet: ${statement.toString()}'); // ดูค่าที่กำลังจะถูกอัปเดต
+                        //เรียก provider
+                        var provider = Provider.of<PlanetProvider>(context,listen:false);
+                        
+                        provider.updatePlanet(statement);
+
+                        
+                        Navigator.push(context, MaterialPageRoute(
+                          fullscreenDialog: true,
+                          builder: (context){
+                          return const MyHomePage(title: '',);
+                        }));
+                      }
+                    },
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 243, 138, 68),
+                      textStyle: const TextStyle(fontSize: 20,)
+                    ),
+                    child: const Text("แก้ไข"))
               ],
-            )));
+            )),
+      ),
+    );
   }
 }
